@@ -17,15 +17,13 @@ public class PlayerMove : MonoBehaviour
     public float jumpTime;
     private bool isJumping;
     float horizontalInput;
-    float countDown;
-    SpriteRenderer sr;
 
-    
+    public HeartController _heartManager;
+
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        sr = GetComponent<SpriteRenderer>();
         jumpTime = 0.2f;
         jumpForce = 10;
         
@@ -35,22 +33,6 @@ public class PlayerMove : MonoBehaviour
     {
         turnSprite();
         jump();
-
-        getHurt();
-
-        
-
-    }
-
-    private void getHurt() {
-        if (countDown > 0)
-        {
-            countDown -= Time.deltaTime;
-        }
-        else
-        {
-            sr.color = Color.white;
-        }
     }
 
 
@@ -73,13 +55,16 @@ public class PlayerMove : MonoBehaviour
         moveHorizontal();
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+   
+
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        // this would need changed to something better. right now
-        // it will effect any collision trigger
-        countDown = 1;
-        sr.color = Color.red;
- 
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            _heartManager.TakeDamage();
+
+            // Other logic for enemy collision, such as player knockback or death
+        }
     }
 
     private void moveHorizontal()
