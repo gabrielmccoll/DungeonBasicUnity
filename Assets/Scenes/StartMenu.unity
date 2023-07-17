@@ -290,7 +290,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 337818368}
         m_TargetAssemblyTypeName: SceneController, Assembly-CSharp
-        m_MethodName: StartGame
+        m_MethodName: NewGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -350,6 +350,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a139b3c49a34534bc58c63cee147fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerHealth: {fileID: 11400000, guid: 2d65f2e7ada5b4c7881dc9cc6e49ae4e, type: 2}
 --- !u!1 &1147821292
 GameObject:
   m_ObjectHideFlags: 0

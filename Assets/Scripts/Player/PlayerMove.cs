@@ -17,8 +17,12 @@ public class PlayerMove : MonoBehaviour
     public float jumpTime;
     private bool isJumping;
     float horizontalInput;
-
+    SpriteRenderer sr;
     public HeartController _heartManager;
+    private Color originalColor;
+    public PlayerHealth playerHealth;
+    private bool isDamaged = false;
+    [SerializeField] SceneController _sceneController;
 
 
     private void Start()
@@ -26,15 +30,49 @@ public class PlayerMove : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         jumpTime = 0.2f;
         jumpForce = 10;
-        
+        sr = GetComponent<SpriteRenderer>();
+        originalColor = sr.color;
+
     }
     // Update is called once per frame
     void Update()
     {
         turnSprite();
         jump();
+
+        if (isDamaged)
+        {
+            StartCoroutine(FlashRed());
+            isDamaged = false;
+        }
     }
 
+    private System.Collections.IEnumerator FlashRed()
+    {
+        sr.color = Color.red;
+        yield return new WaitForSeconds(0.7f);
+        sr.color = originalColor;
+    }
+
+
+    public void TakeDamage()
+    {
+        if (playerHealth.currentHearts > 0)
+        {
+            isDamaged = true;
+            UIManager.Instance.UnfillHeart();
+            if (playerHealth.currentHearts == 0)
+
+            {
+                _sceneController.GameOver();
+            }
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        moveHorizontal();
+    }
 
     private void turnSprite()
     {
@@ -50,18 +88,12 @@ public class PlayerMove : MonoBehaviour
 
     }
 
-    private void FixedUpdate()
-    {
-        moveHorizontal();
-    }
-
-   
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            _heartManager.TakeDamage();
+            TakeDamage();
 
             // Other logic for enemy collision, such as player knockback or death
         }
