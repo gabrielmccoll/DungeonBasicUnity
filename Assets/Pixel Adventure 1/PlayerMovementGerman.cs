@@ -10,6 +10,9 @@ public class PlayerMovementGerman : MonoBehaviour
     private bool isRunning;
     float horizontal = 0;
 
+    private enum MovementState {idle,running,jumping,falling }
+    
+
 
     // Start is called before the first frame update
     void Start()
@@ -23,9 +26,7 @@ public class PlayerMovementGerman : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        horizontal = Input.GetAxisRaw("Horizontal");
-        rb.velocity = new Vector2(horizontal * moveSpeed, rb.velocity.y);
+        MoveHorizontal();
 
         if (Input.GetButtonDown("Jump"))
         {
@@ -39,37 +40,55 @@ public class PlayerMovementGerman : MonoBehaviour
 
     }
 
+    private void MoveHorizontal()
+    {
+        horizontal = Input.GetAxisRaw("Horizontal");
+        rb.velocity = new Vector2(horizontal * moveSpeed, rb.velocity.y);
+
+    }
     private void FixedUpdate()
     {
         UpdateAnimationState();
-
-
-          
-        
+  
     }
 
     private void Jump()
         {
+
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
         }
 
     private void UpdateAnimationState()
     {
+        MovementState state;
+     
         if (horizontal > 0f)
         {
-            anim.SetBool("isRunning", true);
+            state = MovementState.running;
             sr.flipX = false;
         }
         else if (horizontal < 0f)
         {
-            anim.SetBool("isRunning", true);
+            state = MovementState.running;
             sr.flipX = true;
         }
         else
         {
-            anim.SetBool("isRunning", false);
-           
+            state = MovementState.idle;
+
         }
+
+        if (rb.velocity.y > 0.1f)
+        {
+            state = MovementState.jumping;
+        }
+        else if (rb.velocity.y < -0.1f)
+        {
+            state = MovementState.falling;
+        }
+
+
+        anim.SetInteger("movementState", (int)state);
     }
 }
 
